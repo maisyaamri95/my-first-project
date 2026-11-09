@@ -1,7 +1,13 @@
 # my-first-project
 My first AI coding project
 
-## Tugas & Belanja
+## Versi web berbayar (Percuma + Premium)
+
+Folder [`web/`](web/) mengandungi versi yang boleh dijual: log masuk, data di awan, bajet keluarga,
+penjejak pelepasan cukai LHDN dan bayaran Stripe. Panduan pemasangan langkah demi langkah ada dalam
+[`web/README.md`](web/README.md).
+
+## Tugas & Belanja (versi Claude)
 
 Web app untuk iPhone: senarai tugas dan rekod belanja bulanan (RM), dengan bajet dan pecahan ikut kategori.
 
