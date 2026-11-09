@@ -1,0 +1,852 @@
+<title>Tugas &amp; Belanja</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one-column phone app (max 560px) with a sticky header, two views (#tugas, #belanja) and a fixed bottom tab bar.
+   Palette: pandan green for actions, kunyit (turmeric) for "today" and warnings, green-tinted neutrals. */
+:root{
+  --bg:#F1F5F1; --surface:#FFFFFF; --surface-2:#E6EDE7; --ink:#13221B; --ink-2:#55675E;
+  --line:#DCE4DD; --line-strong:#B9C7BD;
+  --pandan:#1D7650; --on-pandan:#FFFFFF;
+  --kunyit:#D9930F; --kunyit-soft:#FBEFD2; --kunyit-ink:#7E5200;
+  --danger:#B93A27; --danger-soft:#F8E1DC;
+  --toast-bg:#13221B; --toast-fg:#F1F5F1; --toast-accent:#F2B940;
+  --c-makan:#C9701A; --c-dapur:#2E8A57; --c-jalan:#2D6AB0; --c-bil:#7650B4; --c-diri:#BC4675; --c-lain:#6A7B73;
+  --shadow:0 1px 2px rgb(19 34 27 / .06), 0 6px 18px rgb(19 34 27 / .06);
+  --f-display:"Bricolage Grotesque","Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --f-body:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1411; --surface:#16201B; --surface-2:#1F2B25; --ink:#E5EEE8; --ink-2:#98ACA1;
+    --line:#26332C; --line-strong:#3A4A41;
+    --pandan:#4CC08A; --on-pandan:#05130C;
+    --kunyit:#F2B940; --kunyit-soft:#3A2E12; --kunyit-ink:#F5CD78;
+    --danger:#F07A63; --danger-soft:#3D1F19;
+    --toast-bg:#E5EEE8; --toast-fg:#0D1411; --toast-accent:#7E5200;
+    --c-makan:#F0A04B; --c-dapur:#5CC48A; --c-jalan:#6FA4E0; --c-bil:#A88AE0; --c-diri:#E788AC; --c-lain:#93A69C;
+    --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 18px rgb(0 0 0 / .25);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1411; --surface:#16201B; --surface-2:#1F2B25; --ink:#E5EEE8; --ink-2:#98ACA1;
+  --line:#26332C; --line-strong:#3A4A41;
+  --pandan:#4CC08A; --on-pandan:#05130C;
+  --kunyit:#F2B940; --kunyit-soft:#3A2E12; --kunyit-ink:#F5CD78;
+  --danger:#F07A63; --danger-soft:#3D1F19;
+  --toast-bg:#E5EEE8; --toast-fg:#0D1411; --toast-accent:#7E5200;
+  --c-makan:#F0A04B; --c-dapur:#5CC48A; --c-jalan:#6FA4E0; --c-bil:#A88AE0; --c-diri:#E788AC; --c-lain:#93A69C;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 18px rgb(0 0 0 / .25);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--pandan);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.app{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(96px + env(safe-area-inset-bottom,0px))}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px}
+.brand{font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.mark{width:24px;height:24px;border-radius:8px;background:var(--pandan);color:var(--on-pandan);display:grid;place-items:center}
+.today{color:var(--ink-2);font-size:13px;font-weight:500}
+
+.note,.sample{margin-top:6px;font-size:13px;padding:10px 12px;border-radius:12px}
+.note{background:var(--surface-2);color:var(--ink-2)}
+.sample{display:flex;gap:6px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--kunyit-soft);color:var(--kunyit-ink)}
+.sample button{border:0;background:none;font-weight:700;color:var(--kunyit-ink);text-decoration:underline;text-underline-offset:3px;padding:4px 0;cursor:pointer}
+
+/* view heading */
+.hero{padding-block:16px 14px}
+h1{font-family:var(--f-display);font-weight:700;font-size:34px;line-height:1.05;letter-spacing:-.025em;margin:0;text-wrap:balance}
+.hero p{margin:6px 0 0;color:var(--ink-2);font-weight:500}
+
+/* cards, fields, buttons */
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
+.field{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--surface-2);border:1.5px solid transparent;border-radius:12px;padding:12px;outline:none;-webkit-appearance:none;appearance:none}
+.field::placeholder{color:var(--ink-2);opacity:.8}
+.field:focus{border-color:var(--pandan);background:var(--surface)}
+input[type="date"].field{min-height:46px;text-align:left}
+input[type="date"]::-webkit-date-and-time-value{text-align:left}
+.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;font-size:15px;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--pandan);color:var(--on-pandan)}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.link{border:0;background:none;padding:6px 0;font-weight:700;color:var(--pandan);cursor:pointer}
+.link.danger{color:var(--danger)}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+
+/* tasks */
+.add-task{display:grid;gap:10px}
+.add-row{display:flex;gap:10px;align-items:flex-end}
+.due-box{flex:1;min-width:0;display:grid;gap:4px}
+.due-box .lbl{padding-left:2px}
+.due-in{position:relative}
+.due-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;border-radius:8px;background:none;color:var(--ink-2);display:grid;place-items:center;cursor:pointer}
+
+.list{list-style:none;margin:14px 0 0;padding:0;background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.list:empty{display:none}
+.list > li{border-top:1px solid var(--line)}
+.list > li:first-child{border-top:0}
+.task{display:flex;align-items:flex-start;gap:4px;padding:6px 4px 6px 4px}
+.check{flex:none;width:44px;height:44px;border:0;background:none;display:grid;place-items:center;cursor:pointer}
+.check i{width:24px;height:24px;border-radius:50%;border:2px solid var(--line-strong);display:grid;place-items:center;color:transparent;transition:background .15s,border-color .15s}
+.check[aria-pressed="true"] i{background:var(--pandan);border-color:var(--pandan);color:var(--on-pandan)}
+.t-body{flex:1;min-width:0;padding-block:11px 9px}
+.t-title{font-weight:600;overflow-wrap:anywhere}
+.is-done .t-title{text-decoration:line-through;text-decoration-color:var(--line-strong);color:var(--ink-2);font-weight:500}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.meta:empty{display:none}
+.chip{font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.chip.overdue{background:var(--danger-soft);color:var(--danger)}
+.chip.due-today{background:var(--kunyit-soft);color:var(--kunyit-ink)}
+.chip.eg{background:transparent;border:1px dashed var(--line-strong);font-weight:600}
+.del{flex:none;width:40px;height:44px;border:0;background:none;color:var(--ink-2);border-radius:10px;display:grid;place-items:center;cursor:pointer;opacity:.7}
+.del:hover{opacity:1;color:var(--danger)}
+
+.done-head{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-top:24px;padding-inline:4px}
+.toggle{display:flex;align-items:center;gap:6px;border:0;background:none;font-weight:700;color:var(--ink-2);padding:6px 0;cursor:pointer}
+.toggle svg{transition:transform .2s}
+.toggle[aria-expanded="true"] svg{transform:rotate(90deg)}
+
+.empty{margin-top:14px;padding:22px 18px;text-align:center;color:var(--ink-2);border:1.5px dashed var(--line-strong);border-radius:var(--r)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+
+/* expenses */
+.month{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-block:16px 14px}
+.month h1{text-align:center;flex:1;min-width:0}
+.mbtn{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.mbtn:disabled{opacity:.35;cursor:default}
+.summary{display:grid;gap:0}
+.total{font-family:var(--f-display);font-weight:700;font-size:46px;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap}
+.total .cur{font-size:18px;color:var(--ink-2);font-weight:600;letter-spacing:0}
+.count{color:var(--ink-2);font-size:13px;font-weight:500;margin-top:2px}
+.budget{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar > span{display:block;height:100%;width:0;background:var(--pandan);border-radius:inherit;transition:width .4s ease}
+.bar.warn > span{background:var(--kunyit)}
+.bar.over > span{background:var(--danger)}
+.b-text{margin-top:8px;font-weight:600;font-variant-numeric:tabular-nums}
+.b-text.over{color:var(--danger)}
+.b-sub{color:var(--ink-2);font-size:13px;font-variant-numeric:tabular-nums}
+.b-actions{display:flex;gap:16px;flex-wrap:wrap}
+.b-form{display:grid;gap:8px}
+.b-form .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.b-form .money{flex:1 1 140px}
+.split-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.split{display:flex;gap:2px;height:12px;border-radius:99px;overflow:hidden;background:var(--surface-2);margin-top:10px}
+.split span{display:block;height:100%;min-width:3px;background:var(--c)}
+.legend{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:10px minmax(0,1fr) auto 3em;gap:10px;align-items:center;font-size:14px}
+.sw{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.legend .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legend .amt{font-weight:700;font-variant-numeric:tabular-nums}
+.legend .pct{color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums;font-size:13px}
+
+.add-exp{display:grid;gap:12px;margin-top:14px}
+.money{display:flex;align-items:center;gap:8px;background:var(--surface-2);border-radius:12px;padding:0 12px;border:1.5px solid transparent}
+.money:focus-within{border-color:var(--pandan);background:var(--surface)}
+.money .cur{font-weight:700;color:var(--ink-2)}
+.money input{flex:1;min-width:0;border:0;background:transparent;font-family:var(--f-display);font-size:24px;font-weight:700;padding:9px 0;color:var(--ink);outline:none;font-variant-numeric:tabular-nums}
+.money input::placeholder{color:var(--ink-2);opacity:.6}
+.b-form .money input{font-size:18px}
+.cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0;margin:0;padding:0;min-width:0}
+.cats legend{padding:0;margin-bottom:6px}
+.cat{position:relative;min-width:0}
+.cat input{position:absolute;opacity:0;pointer-events:none}
+.cat label{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px 8px;border-radius:12px;background:var(--surface-2);font-size:12.5px;font-weight:700;color:var(--ink-2);border:1.5px solid transparent;cursor:pointer;min-width:0}
+.cat label span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat svg{flex:none;color:var(--c)}
+.cat input:checked + label{border-color:var(--c);color:var(--ink);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.cat input:focus-visible + label{outline:2px solid var(--pandan);outline-offset:2px}
+.exp-row{display:flex;gap:10px;align-items:flex-end}
+.exp-row .due-box{flex:1}
+.err{color:var(--danger);font-size:13px;font-weight:600}
+
+.day{margin-top:20px}
+.day .list{margin-top:0}
+.day-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:0 4px 8px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.day-h .sum{font-variant-numeric:tabular-nums}
+.exp{display:flex;align-items:center;gap:12px;padding:10px 2px 10px 12px}
+.ico{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}
+.e-body{flex:1;min-width:0}
+.e-label{font-weight:600;overflow-wrap:anywhere}
+.e-meta{font-size:12.5px;color:var(--ink-2);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:1px}
+.e-amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* tab bar + toast */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr}
+.tab{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;color:var(--ink-2);font-size:12px;font-weight:700;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--pandan)}
+.badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:11px;line-height:18px;text-align:center;font-variant-numeric:tabular-nums}
+.toast{position:fixed;z-index:7;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));max-width:528px;margin:0 auto;background:var(--toast-bg);color:var(--toast-fg);border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow);font-weight:600}
+.toast button{border:0;background:none;color:var(--toast-accent);font-weight:800;padding:4px 2px;cursor:pointer}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="mark" id="brandMark"></span>Tugas &amp; Belanja</div>
+    <div class="today" id="todayLabel"></div>
+  </header>
+
+  <div class="note" id="modeNote" role="status" hidden></div>
+  <div class="sample" id="sampleBar" hidden>
+    <span>Rekod bertanda <b>Contoh</b> cuma untuk tunjuk cara app ini berfungsi.</span>
+    <button type="button" id="clearSamples">Padam semua contoh</button>
+  </div>
+
+  <main>
+    <!-- TUGAS -->
+    <section id="view-tugas" aria-labelledby="h-tugas">
+      <div class="hero">
+        <h1 id="h-tugas">Tugas</h1>
+        <p id="taskSummary">Memuatkan…</p>
+      </div>
+
+      <form id="taskForm" class="card add-task" autocomplete="off">
+        <label for="taskTitle" class="sr">Tugas baru</label>
+        <input id="taskTitle" class="field" placeholder="Tambah tugas, cth: Bayar bil air" maxlength="200" enterkeyhint="done">
+        <div class="add-row">
+          <div class="due-box">
+            <label for="taskDue" class="lbl">Tarikh akhir (pilihan)</label>
+            <div class="due-in">
+              <input id="taskDue" class="field" type="date">
+              <button type="button" class="due-clear" id="taskDueClear" aria-label="Kosongkan tarikh" hidden></button>
+            </div>
+          </div>
+          <button class="btn primary" type="submit">Tambah</button>
+        </div>
+      </form>
+
+      <ul id="taskList" class="list" aria-label="Tugas belum siap"></ul>
+      <div id="taskEmpty" class="empty" hidden></div>
+
+      <div id="doneWrap" hidden>
+        <div class="done-head">
+          <button type="button" class="toggle" id="toggleDone" aria-expanded="false" aria-controls="doneList"></button>
+          <button type="button" class="link danger" id="clearDone">Padam semua yang selesai</button>
+        </div>
+        <ul id="doneList" class="list" aria-label="Tugas selesai" hidden></ul>
+      </div>
+    </section>
+
+    <!-- BELANJA -->
+    <section id="view-belanja" aria-labelledby="monthLabel" hidden>
+      <div class="month">
+        <button type="button" class="mbtn" id="prevMonth" aria-label="Bulan sebelum"></button>
+        <h1 id="monthLabel"></h1>
+        <button type="button" class="mbtn" id="nextMonth" aria-label="Bulan seterusnya"></button>
+      </div>
+
+      <div class="card summary">
+        <div class="lbl">Jumlah belanja</div>
+        <div class="total"><span class="cur">RM</span><span id="totalAmt">0.00</span></div>
+        <div class="count" id="expCount"></div>
+
+        <div class="budget">
+          <div id="budgetView" hidden>
+            <div class="bar" id="budgetBar"><span id="budgetFill"></span></div>
+            <div class="b-text" id="budgetText"></div>
+            <div class="b-sub" id="budgetSub"></div>
+            <div class="b-actions"><button type="button" class="link" id="budgetEdit">Ubah bajet</button></div>
+          </div>
+          <button type="button" class="link" id="budgetSet" hidden>+ Tetapkan bajet bulanan</button>
+          <form id="budgetForm" class="b-form" hidden autocomplete="off">
+            <label for="budgetInput" class="lbl">Bajet sebulan</label>
+            <div class="row">
+              <div class="money"><span class="cur">RM</span><input id="budgetInput" inputmode="decimal" placeholder="1500.00" enterkeyhint="done"></div>
+              <button type="submit" class="btn primary">Simpan</button>
+              <button type="button" class="btn ghost" id="budgetCancel">Batal</button>
+            </div>
+            <div class="err" id="budgetErr" hidden></div>
+            <div><button type="button" class="link danger" id="budgetRemove" hidden>Buang bajet</button></div>
+          </form>
+        </div>
+
+        <div class="split-wrap" id="splitWrap" hidden>
+          <div class="lbl">Ikut kategori</div>
+          <div class="split" id="splitBar" aria-hidden="true"></div>
+          <ul class="legend" id="legend"></ul>
+        </div>
+      </div>
+
+      <form id="expForm" class="card add-exp" autocomplete="off" novalidate>
+        <div class="lbl">Rekod belanja</div>
+        <label for="expAmt" class="sr">Jumlah dalam ringgit</label>
+        <div class="money"><span class="cur">RM</span><input id="expAmt" inputmode="decimal" placeholder="0.00" enterkeyhint="next"></div>
+        <label for="expLabel" class="sr">Untuk apa</label>
+        <input id="expLabel" class="field" placeholder="Untuk apa? cth: Nasi lemak" maxlength="120" enterkeyhint="done">
+        <fieldset class="cats" id="catPicker"><legend class="sr">Kategori</legend></fieldset>
+        <div class="exp-row">
+          <div class="due-box">
+            <label for="expDate" class="lbl">Tarikh</label>
+            <input id="expDate" class="field" type="date">
+          </div>
+          <button class="btn primary" type="submit">Simpan</button>
+        </div>
+        <div class="err" id="expErr" hidden></div>
+      </form>
+
+      <div id="expList"></div>
+      <div id="expEmpty" class="empty" hidden></div>
+    </section>
+  </main>
+</div>
+
+<nav class="tabs" aria-label="Bahagian">
+  <div class="tabs-in" role="tablist">
+    <button type="button" class="tab" role="tab" id="tab-tugas" data-view="tugas" aria-controls="view-tugas"><span class="ti" data-icon="tugas"></span>Tugas<span class="badge" id="taskBadge" hidden></span></button>
+    <button type="button" class="tab" role="tab" id="tab-belanja" data-view="belanja" aria-controls="view-belanja"><span class="ti" data-icon="belanja"></span>Belanja</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button type="button" id="toastUndo" hidden>Batal</button></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- constants & helpers ---------- */
+const BULAN = ['Januari','Februari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember'];
+const BLN = ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'];
+const HARI = ['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'];
+const CATS = [
+  {id:'makan', name:'Makan & minum', short:'Makan'},
+  {id:'dapur', name:'Barang dapur',  short:'Dapur'},
+  {id:'jalan', name:'Pengangkutan',  short:'Kenderaan'},
+  {id:'bil',   name:'Bil & utiliti', short:'Bil'},
+  {id:'diri',  name:'Peribadi',      short:'Peribadi'},
+  {id:'lain',  name:'Lain-lain',     short:'Lain-lain'},
+];
+const CAT = Object.fromEntries(CATS.map(c => [c.id, c]));
+const ICON = {
+  makan:'<path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M8.5 7.5c0-1.6 1-1.6 1-3.2M12 7.5c0-1.6 1-1.6 1-3.2M15.5 7.5c0-1.6 1-1.6 1-3.2"/>',
+  dapur:'<path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  jalan:'<path d="M5 12l1.8-4.6A2 2 0 0 1 8.7 6h6.6a2 2 0 0 1 1.9 1.4L19 12"/><rect x="3" y="12" width="18" height="5.5" rx="1.6"/><path d="M6.5 17.5V20M17.5 17.5V20"/>',
+  bil:'<path d="M13 3 5 14h6l-1 7 8-11h-6l1-7Z"/>',
+  diri:'<path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="7.5" r="1.4"/>',
+  lain:'<circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/>',
+  check:'<path d="M5 12.5l4.2 4.2L19 7"/>',
+  x:'<path d="M7 7l10 10M17 7 7 17"/>',
+  left:'<path d="M15 5l-7 7 7 7"/>',
+  right:'<path d="M9 5l7 7-7 7"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  tugas:'<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.4 1.4L7.5 5M3.5 12l1.4 1.4L7.5 11M3.5 18l1.4 1.4L7.5 17"/>',
+  belanja:'<rect x="3" y="6" width="18" height="14" rx="2.5"/><path d="M16 13h2"/><path d="M6 6V5.5A2.5 2.5 0 0 1 8.5 3H17"/>',
+};
+const svg = (name, size = 18, sw = 1.9) =>
+  `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name]}</svg>`;
+
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const todayStr = () => ymd(new Date());
+const monthOf = s => s.slice(0, 7);
+const dayDiff = (a, b) => Math.round((parseYmd(a) - parseYmd(b)) / 86400000);
+const isYmd = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
+const sen = a => Math.round((Number(a) || 0) * 100);
+const fmtRM = n => (Math.round(n * 100) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const newId = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+  : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function parseAmount(v){
+  v = String(v || '').trim().replace(/^rm\s*/i, '').replace(/\s/g, '');
+  if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(v)) v = v.replace(/,/g, ''); else v = v.replace(',', '.');
+  if (!/^\d*\.?\d*$/.test(v) || v === '' || v === '.') return NaN;
+  const n = Number(v);
+  if (!isFinite(n) || n <= 0 || n >= 1e7) return NaN;
+  return Math.round(n * 100) / 100;
+}
+function dueLabel(due, today){
+  const d = dayDiff(due, today);
+  if (d < 0) return {text: d === -1 ? 'Lewat semalam' : `Lewat ${-d} hari`, cls: 'overdue'};
+  if (d === 0) return {text: 'Hari ini', cls: 'due-today'};
+  if (d === 1) return {text: 'Esok', cls: ''};
+  const dt = parseYmd(due);
+  if (d < 7) return {text: HARI[dt.getDay()], cls: ''};
+  return {text: `${dt.getDate()} ${BLN[dt.getMonth()]}${dt.getFullYear() !== new Date().getFullYear() ? ' ' + dt.getFullYear() : ''}`, cls: ''};
+}
+function dayHeading(date, today){
+  const d = dayDiff(date, today), dt = parseYmd(date);
+  const full = `${HARI[dt.getDay()]}, ${dt.getDate()} ${BLN[dt.getMonth()]}`;
+  if (d === 0) return `Hari ini · ${full}`;
+  if (d === -1) return `Semalam · ${full}`;
+  return full;
+}
+
+/* ---------- state ---------- */
+const S = {
+  mode: 'loading',          // 'db' | 'local'
+  why: '',                  // reason for local mode
+  tasks: [], expenses: [], settings: null,
+  month: monthOf(todayStr()),
+  view: 'tugas',
+  showDone: false,
+  editingBudget: false,
+  loaded: {tasks: false, expenses: false},
+  stale: false, dbDead: false,
+};
+const norm = {
+  task: (id, d) => ({id, title: String(d.title || '').slice(0, 200), done: !!d.done, due: isYmd(d.due) ? d.due : '',
+    createdAt: +d.createdAt || 0, doneAt: +d.doneAt || 0, contoh: !!d.contoh}),
+  exp: (id, d) => { const date = isYmd(d.date) ? d.date : todayStr();
+    return {id, label: String(d.label || '').slice(0, 120), amount: Math.max(0, Number(d.amount) || 0),
+      category: CAT[d.category] ? d.category : 'lain', date, month: monthOf(date), createdAt: +d.createdAt || 0, contoh: !!d.contoh}; },
+};
+const taskData = t => { const o = {title: t.title, done: t.done, due: t.due, createdAt: t.createdAt, doneAt: t.doneAt}; if (t.contoh) o.contoh = true; return o; };
+const expData = e => { const o = {label: e.label, amount: e.amount, category: e.category, date: e.date, month: e.month, createdAt: e.createdAt}; if (e.contoh) o.contoh = true; return o; };
+
+/* ---------- storage: claude db (owner) or this device ---------- */
+let DB = null, unsubExp = null, staleTimer = null;
+const LS_KEY = 'tugas-belanja.v1';
+const local = {data: {tasks: {}, expenses: {}, settings: null}, mem: false};
+function loadLocal(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { const d = JSON.parse(raw); if (d && typeof d === 'object') local.data = {tasks: d.tasks || {}, expenses: d.expenses || {}, settings: d.settings || null}; }
+  } catch (e) { local.mem = true; }
+}
+function saveLocal(){ try { localStorage.setItem(LS_KEY, JSON.stringify(local.data)); } catch (e) { local.mem = true; } }
+function syncLocal(){
+  S.tasks = Object.entries(local.data.tasks).map(([id, v]) => norm.task(id, v || {}));
+  S.expenses = Object.entries(local.data.expenses).map(([id, v]) => norm.exp(id, v || {})).filter(e => e.month === S.month);
+  S.settings = local.data.settings;
+  S.loaded.tasks = S.loaded.expenses = true;
+  renderAll();
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function retry(fn){
+  try { return await fn(); }
+  catch (e) { if (e && e.code === 'unavailable') { await sleep(400 + Math.random() * 600); return fn(); } throw e; }
+}
+async function put(coll, id, data){
+  if (S.mode === 'db') return retry(() => DB.collection(coll).doc(id).set(data));
+  local.data[coll][id] = data; saveLocal(); syncLocal();
+}
+async function patch(coll, id, data){
+  if (S.mode === 'db') return retry(() => DB.collection(coll).doc(id).update(data));
+  if (local.data[coll][id]) local.data[coll][id] = Object.assign({}, local.data[coll][id], data);
+  saveLocal(); syncLocal();
+}
+async function remove(coll, id){
+  if (S.mode === 'db') return retry(() => DB.collection(coll).doc(id).delete());
+  delete local.data[coll][id]; saveLocal(); syncLocal();
+}
+async function putSettings(data){
+  if (S.mode === 'db') return retry(() => DB.doc('settings/main').set(data));
+  local.data.settings = data; saveLocal(); syncLocal();
+}
+async function removeSettings(){
+  if (S.mode === 'db') return retry(() => DB.doc('settings/main').delete());
+  local.data.settings = null; saveLocal(); syncLocal();
+}
+function fail(e){
+  const code = e && e.code;
+  let msg = 'Tak dapat simpan. Semak sambungan internet dan cuba lagi.';
+  if (code === 'quota_exceeded') msg = 'Storan sudah penuh. Padam beberapa rekod lama dahulu.';
+  else if (code === 'invalid_argument') msg = 'Perubahan ini tak dapat disimpan.';
+  else if (code === 'revoked' || code === 'not_granted') { S.dbDead = true; renderNote(); msg = 'Storan tidak tersedia sekarang.'; }
+  toast(msg);
+}
+
+function armStale(){
+  clearTimeout(staleTimer);
+  staleTimer = setTimeout(() => { S.stale = true; renderAll(); }, 10000);
+}
+function clearStale(){ clearTimeout(staleTimer); if (S.stale) { S.stale = false; renderAll(); } }
+function dbError(err){
+  clearTimeout(staleTimer);
+  S.dbDead = true; S.loaded.tasks = S.loaded.expenses = true;
+  renderAll();
+}
+function startDb(db){
+  DB = db; S.mode = 'db';
+  armStale();
+  db.collection('tasks').onSnapshot(snap => {
+    S.tasks = snap.docs.map(d => norm.task(d.id, d.data() || {}));
+    S.loaded.tasks = true;
+    if (!snap.metadata.fromCache) clearStale();
+    renderAll();
+  }, dbError);
+  db.doc('settings/main').onSnapshot(snap => {
+    S.settings = snap.exists ? (snap.data() || null) : null;
+    renderExpenses(); renderSampleBar();
+  }, () => {});
+  subscribeMonth();
+}
+function subscribeMonth(){
+  if (unsubExp) unsubExp();
+  S.loaded.expenses = false; S.expenses = [];
+  unsubExp = DB.collection('expenses').where('month', '==', S.month).onSnapshot(snap => {
+    S.expenses = snap.docs.map(d => norm.exp(d.id, d.data() || {}));
+    S.loaded.expenses = true;
+    renderExpenses(); renderSampleBar();
+  }, dbError);
+}
+function startLocal(why){
+  S.mode = 'local'; S.why = why;
+  loadLocal(); syncLocal();
+}
+async function init(){
+  renderStatic(); fromHash(); renderAll();
+  const c = window.claude;
+  if (!c || typeof c.use !== 'function') return startLocal('standalone');
+  let db = null, user = null;
+  try { [db, user] = await Promise.all([c.use('db'), c.use('user')]); } catch (e) {}
+  let owner = false;
+  if (db && user) { try { owner = await user.isOwner(); } catch (e) {} }
+  if (db && owner) startDb(db);
+  else startLocal(db ? 'notowner' : 'nodb');
+}
+
+/* ---------- rendering ---------- */
+function renderStatic(){
+  $('#brandMark').innerHTML = svg('check', 15, 2.6);
+  document.querySelectorAll('[data-icon]').forEach(n => { n.innerHTML = svg(n.dataset.icon, 24, 1.8); });
+  $('#prevMonth').innerHTML = svg('left', 18, 2.2);
+  $('#nextMonth').innerHTML = svg('right', 18, 2.2);
+  $('#taskDueClear').innerHTML = svg('x', 16, 2.2);
+  const d = new Date();
+  $('#todayLabel').textContent = `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
+  const picker = $('#catPicker');
+  CATS.forEach((c, i) => {
+    const w = el('div', 'cat'); w.style.setProperty('--c', `var(--c-${c.id})`);
+    const inp = document.createElement('input'); inp.type = 'radio'; inp.name = 'cat'; inp.id = 'cat-' + c.id; inp.value = c.id; if (i === 0) inp.checked = true;
+    const lab = document.createElement('label'); lab.htmlFor = inp.id; lab.innerHTML = svg(c.id, 16, 2);
+    lab.append(el('span', '', c.short));
+    w.append(inp, lab); picker.append(w);
+  });
+  $('#expDate').value = todayStr();
+}
+function renderAll(){ renderNote(); renderSampleBar(); renderTasks(); renderExpenses(); renderTabs(); }
+
+function renderNote(){
+  const n = $('#modeNote'); let msg = '';
+  if (S.mode === 'local') {
+    if (local.mem) msg = 'Pelayar ini tidak membenarkan simpanan. Data akan hilang bila halaman ditutup.';
+    else if (S.why === 'notowner') msg = 'Ini app milik orang lain. Apa yang anda tambah disimpan dalam peranti ini sahaja.';
+    else if (S.why === 'nodb') msg = 'Data disimpan dalam peranti ini sahaja. Buka app ini dalam Claude (sudah log masuk) supaya data disimpan dalam akaun anda.';
+    else msg = 'Data disimpan dalam pelayar peranti ini sahaja.';
+  } else if (S.mode === 'db') {
+    if (S.dbDead) msg = 'Storan tidak tersedia sekarang. Muat semula halaman untuk cuba lagi.';
+    else if (S.stale) msg = 'Belum dapat sambung ke storan. Senarai mungkin belum terkini.';
+  }
+  n.textContent = msg; n.hidden = !msg;
+}
+function renderSampleBar(){
+  const any = S.tasks.some(t => t.contoh) || S.expenses.some(e => e.contoh) || !!(S.settings && S.settings.contoh);
+  $('#sampleBar').hidden = !any;
+}
+function egChip(){ return el('span', 'chip eg', 'Contoh'); }
+
+function taskEl(t, today){
+  const li = el('li', 'task' + (t.done ? ' is-done' : '')); li.dataset.id = t.id;
+  const chk = el('button', 'check'); chk.type = 'button'; chk.dataset.act = 'toggle';
+  chk.setAttribute('aria-pressed', String(t.done));
+  chk.setAttribute('aria-label', (t.done ? 'Tandakan belum siap: ' : 'Tandakan selesai: ') + t.title);
+  const i = el('i'); i.innerHTML = svg('check', 14, 3); chk.append(i);
+  const body = el('div', 't-body'); body.append(el('div', 't-title', t.title));
+  const meta = el('div', 'meta');
+  if (t.due && !t.done) { const d = dueLabel(t.due, today); meta.append(el('span', 'chip ' + d.cls, d.text)); }
+  if (t.contoh) meta.append(egChip());
+  body.append(meta);
+  const del = el('button', 'del'); del.type = 'button'; del.dataset.act = 'del';
+  del.setAttribute('aria-label', 'Padam tugas: ' + t.title); del.innerHTML = svg('x', 18, 2);
+  li.append(chk, body, del);
+  return li;
+}
+function renderTasks(){
+  const today = todayStr();
+  const open = S.tasks.filter(t => !t.done).sort((a, b) => {
+    if (a.due && b.due && a.due !== b.due) return a.due < b.due ? -1 : 1;
+    if (a.due && !b.due) return -1;
+    if (b.due && !a.due) return 1;
+    return b.createdAt - a.createdAt;
+  });
+  const done = S.tasks.filter(t => t.done).sort((a, b) => b.doneAt - a.doneAt);
+  const overdue = open.filter(t => t.due && t.due < today).length;
+  const dueToday = open.filter(t => t.due === today).length;
+
+  let sum;
+  if (!S.loaded.tasks) sum = S.stale ? 'Belum dapat muatkan senarai.' : 'Memuatkan…';
+  else if (!S.tasks.length) sum = 'Tiada tugas lagi.';
+  else if (!open.length) sum = 'Semua tugas sudah selesai.';
+  else {
+    const p = [`${open.length} belum siap`];
+    if (overdue) p.push(`${overdue} lewat tarikh`);
+    if (dueToday) p.push(`${dueToday} untuk hari ini`);
+    sum = p.join(' · ');
+  }
+  $('#taskSummary').textContent = sum;
+
+  const list = $('#taskList'); list.replaceChildren(...open.map(t => taskEl(t, today)));
+  const emp = $('#taskEmpty');
+  if (!S.loaded.tasks) { emp.innerHTML = S.stale ? '<b>Belum dapat sambung</b>Senarai akan muncul sebaik sahaja storan menjawab.' : 'Memuatkan senarai…'; emp.hidden = false; }
+  else if (!S.tasks.length) { emp.innerHTML = '<b>Belum ada tugas</b>Tulis tugas pertama di atas, contohnya “Bayar bil air”, kemudian tekan Tambah.'; emp.hidden = false; }
+  else if (!open.length) { emp.innerHTML = '<b>Tiada tugas tertunggak</b>Tugas yang sudah selesai ada di bawah.'; emp.hidden = false; }
+  else emp.hidden = true;
+
+  $('#doneWrap').hidden = done.length === 0;
+  const tg = $('#toggleDone');
+  tg.innerHTML = svg('chev', 16, 2.4); tg.append(document.createTextNode(`Selesai (${done.length})`));
+  tg.setAttribute('aria-expanded', String(S.showDone));
+  const dl = $('#doneList'); dl.hidden = !S.showDone;
+  dl.replaceChildren(...done.map(t => taskEl(t, today)));
+  const b = $('#taskBadge'); b.textContent = open.length; b.hidden = !open.length;
+}
+
+function expEl(e){
+  const li = el('li', 'exp'); li.dataset.id = e.id; li.style.setProperty('--c', `var(--c-${e.category})`);
+  const ico = el('span', 'ico'); ico.innerHTML = svg(e.category, 19, 2);
+  const body = el('div', 'e-body');
+  body.append(el('div', 'e-label', e.label || CAT[e.category].name));
+  const meta = el('div', 'e-meta'); meta.append(el('span', '', CAT[e.category].name)); if (e.contoh) meta.append(egChip());
+  body.append(meta);
+  const amt = el('div', 'e-amt', 'RM ' + fmtRM(e.amount));
+  const del = el('button', 'del'); del.type = 'button'; del.dataset.act = 'del';
+  del.setAttribute('aria-label', `Padam belanja: ${e.label || CAT[e.category].name}, RM ${fmtRM(e.amount)}`); del.innerHTML = svg('x', 18, 2);
+  li.append(ico, body, amt, del);
+  return li;
+}
+function renderExpenses(){
+  const [y, m] = S.month.split('-').map(Number);
+  const today = todayStr(), curMonth = monthOf(today);
+  $('#monthLabel').textContent = `${BULAN[m - 1]} ${y}`;
+  $('#nextMonth').disabled = S.month >= curMonth;
+
+  const list = [...S.expenses].sort((a, b) => a.date !== b.date ? (a.date < b.date ? 1 : -1) : b.createdAt - a.createdAt);
+  const totalSen = list.reduce((s, e) => s + sen(e.amount), 0);
+  $('#totalAmt').textContent = fmtRM(totalSen / 100);
+  $('#expCount').textContent = !S.loaded.expenses ? 'Memuatkan…' : list.length ? `${list.length} rekod bulan ini` : 'Belum ada rekod bulan ini';
+
+  // budget
+  const budget = S.settings && Number(S.settings.budget) > 0 ? Number(S.settings.budget) : 0;
+  const editing = S.editingBudget;
+  $('#budgetForm').hidden = !editing;
+  $('#budgetView').hidden = editing || !budget;
+  $('#budgetSet').hidden = editing || !!budget;
+  $('#budgetRemove').hidden = !budget;
+  if (budget && !editing) {
+    const bSen = Math.round(budget * 100), used = totalSen / bSen;
+    $('#budgetFill').style.width = Math.min(100, used * 100).toFixed(1) + '%';
+    $('#budgetBar').className = 'bar' + (used > 1 ? ' over' : used >= 0.8 ? ' warn' : '');
+    const bt = $('#budgetText'), bs = $('#budgetSub');
+    bt.replaceChildren(); bs.textContent = '';
+    if (totalSen <= bSen) {
+      bt.className = 'b-text';
+      bt.textContent = `Baki RM ${fmtRM((bSen - totalSen) / 100)} daripada bajet RM ${fmtRM(budget)}`;
+      if (S.month === curMonth) {
+        const dim = new Date(y, m, 0).getDate(), left = dim - new Date().getDate() + 1;
+        bs.textContent = `Lebih kurang RM ${fmtRM((bSen - totalSen) / 100 / left)} sehari untuk ${left} hari lagi`;
+      } else bs.textContent = `${Math.round(used * 100)}% bajet digunakan`;
+    } else {
+      bt.className = 'b-text over';
+      bt.textContent = `Melebihi bajet sebanyak RM ${fmtRM((totalSen - bSen) / 100)}`;
+      bs.textContent = `Bajet bulanan RM ${fmtRM(budget)}`;
+    }
+    if (S.settings && S.settings.contoh) { bt.append(document.createTextNode(' ')); bt.append(egChip()); }
+  }
+
+  // by category
+  const byCat = CATS.map(c => ({...c, sen: list.filter(e => e.category === c.id).reduce((s, e) => s + sen(e.amount), 0)}))
+    .filter(c => c.sen > 0).sort((a, b) => b.sen - a.sen);
+  $('#splitWrap').hidden = !byCat.length;
+  $('#splitBar').replaceChildren(...byCat.map(c => { const s = el('span'); s.style.setProperty('--c', `var(--c-${c.id})`); s.style.flex = `${c.sen} 1 0`; return s; }));
+  $('#legend').replaceChildren(...byCat.map(c => {
+    const li = el('li'); li.style.setProperty('--c', `var(--c-${c.id})`);
+    li.append(el('span', 'sw'), el('span', 'nm', c.name), el('span', 'amt', 'RM ' + fmtRM(c.sen / 100)),
+      el('span', 'pct', Math.round(c.sen / totalSen * 100) + '%'));
+    return li;
+  }));
+
+  // list by day
+  const groups = new Map();
+  for (const e of list) { if (!groups.has(e.date)) groups.set(e.date, []); groups.get(e.date).push(e); }
+  const wrap = $('#expList'); const secs = [];
+  for (const [date, items] of groups) {
+    const sec = el('section', 'day');
+    const h = el('div', 'day-h');
+    h.append(el('span', '', dayHeading(date, today)), el('span', 'sum', 'RM ' + fmtRM(items.reduce((s, e) => s + sen(e.amount), 0) / 100)));
+    const ul = el('ul', 'list'); ul.append(...items.map(expEl));
+    sec.append(h, ul); secs.push(sec);
+  }
+  wrap.replaceChildren(...secs);
+  const emp = $('#expEmpty');
+  if (!S.loaded.expenses) { emp.innerHTML = S.stale ? '<b>Belum dapat sambung</b>Rekod akan muncul sebaik sahaja storan menjawab.' : 'Memuatkan rekod…'; emp.hidden = false; }
+  else if (!list.length) { emp.innerHTML = `<b>Tiada belanja untuk ${BULAN[m - 1]}</b>Masukkan jumlah dan pilih kategori di atas, kemudian tekan Simpan.`; emp.hidden = false; }
+  else emp.hidden = true;
+}
+
+function renderTabs(){
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === S.view)));
+}
+function setView(v){
+  S.view = v;
+  $('#view-tugas').hidden = v !== 'tugas';
+  $('#view-belanja').hidden = v !== 'belanja';
+  renderTabs();
+}
+function fromHash(){ setView(location.hash === '#belanja' ? 'belanja' : 'tugas'); }
+
+/* ---------- toast ---------- */
+let toastTimer = null, undoFn = null;
+function toast(msg, undo){
+  $('#toastMsg').textContent = msg;
+  undoFn = undo || null;
+  $('#toastUndo').hidden = !undo;
+  $('#toast').hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { $('#toast').hidden = true; undoFn = null; }, undo ? 6000 : 3200);
+}
+$('#toastUndo').addEventListener('click', () => {
+  const f = undoFn; undoFn = null; $('#toast').hidden = true; clearTimeout(toastTimer);
+  if (f) Promise.resolve().then(f).catch(fail);
+});
+
+/* ---------- events: tabs & months ---------- */
+window.addEventListener('hashchange', fromHash);
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  const v = t.dataset.view;
+  try { if (location.hash !== '#' + v) location.hash = v; } catch (e) {}
+  setView(v); window.scrollTo(0, 0);
+}));
+function shiftMonth(delta){
+  const [y, m] = S.month.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  const next = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+  if (next > monthOf(todayStr())) return;
+  S.month = next;
+  if (S.mode === 'db') { subscribeMonth(); renderExpenses(); }
+  else if (S.mode === 'local') syncLocal();
+}
+$('#prevMonth').addEventListener('click', () => shiftMonth(-1));
+$('#nextMonth').addEventListener('click', () => shiftMonth(1));
+
+/* ---------- events: tasks ---------- */
+const dueIn = $('#taskDue'), dueClear = $('#taskDueClear');
+dueIn.addEventListener('input', () => { dueClear.hidden = !dueIn.value; });
+dueClear.addEventListener('click', () => { dueIn.value = ''; dueClear.hidden = true; dueIn.focus(); });
+$('#taskForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (S.mode === 'loading') return;
+  const inp = $('#taskTitle'); const title = inp.value.trim();
+  if (!title) { inp.focus(); return; }
+  const due = isYmd(dueIn.value) ? dueIn.value : '';
+  inp.value = ''; dueIn.value = ''; dueClear.hidden = true;
+  try { await put('tasks', newId(), {title, done: false, due, createdAt: Date.now(), doneAt: 0}); }
+  catch (err) { inp.value = title; fail(err); }
+});
+async function onTaskClick(e){
+  const btn = e.target.closest('button[data-act]'); if (!btn) return;
+  const id = btn.closest('li').dataset.id; const t = S.tasks.find(x => x.id === id); if (!t) return;
+  if (btn.dataset.act === 'toggle') {
+    try { await patch('tasks', id, {done: !t.done, doneAt: t.done ? 0 : Date.now()}); } catch (err) { fail(err); }
+  } else {
+    try { await remove('tasks', id); toast('Tugas dipadam.', () => put('tasks', id, taskData(t))); } catch (err) { fail(err); }
+  }
+}
+$('#taskList').addEventListener('click', onTaskClick);
+$('#doneList').addEventListener('click', onTaskClick);
+$('#toggleDone').addEventListener('click', () => { S.showDone = !S.showDone; renderTasks(); });
+let clearArmed = 0, clearTimer = null;
+$('#clearDone').addEventListener('click', async () => {
+  const btn = $('#clearDone');
+  if (Date.now() - clearArmed > 4000) {
+    clearArmed = Date.now(); btn.textContent = 'Tekan sekali lagi untuk padam';
+    clearTimeout(clearTimer); clearTimer = setTimeout(() => { btn.textContent = 'Padam semua yang selesai'; clearArmed = 0; }, 4000);
+    return;
+  }
+  clearArmed = 0; clearTimeout(clearTimer); btn.textContent = 'Padam semua yang selesai';
+  const done = S.tasks.filter(t => t.done);
+  try { for (const t of done) await remove('tasks', t.id); toast(`${done.length} tugas selesai dipadam.`); }
+  catch (err) { fail(err); }
+});
+
+/* ---------- events: expenses ---------- */
+$('#expForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (S.mode === 'loading') return;
+  const err = $('#expErr'); err.hidden = true;
+  const amt = parseAmount($('#expAmt').value);
+  if (!(amt > 0)) { err.textContent = 'Masukkan jumlah dalam ringgit, contohnya 12.50'; err.hidden = false; $('#expAmt').focus(); return; }
+  const cat = (document.querySelector('input[name="cat"]:checked') || {}).value || 'lain';
+  const label = $('#expLabel').value.trim();
+  const date = isYmd($('#expDate').value) ? $('#expDate').value : todayStr();
+  const data = {label, amount: amt, category: cat, date, month: monthOf(date), createdAt: Date.now()};
+  const prev = {amt: $('#expAmt').value, label};
+  $('#expAmt').value = ''; $('#expLabel').value = '';
+  try {
+    await put('expenses', newId(), data);
+    if (data.month !== S.month) { const [y, m] = data.month.split('-').map(Number); toast(`Disimpan dalam ${BULAN[m - 1]} ${y}.`); }
+    else toast(`RM ${fmtRM(amt)} disimpan.`);
+  } catch (er) { $('#expAmt').value = prev.amt; $('#expLabel').value = prev.label; fail(er); }
+});
+$('#expAmt').addEventListener('input', () => { $('#expErr').hidden = true; });
+$('#expList').addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-act="del"]'); if (!btn) return;
+  const id = btn.closest('li').dataset.id; const x = S.expenses.find(v => v.id === id); if (!x) return;
+  try { await remove('expenses', id); toast(`RM ${fmtRM(x.amount)} dipadam.`, () => put('expenses', id, expData(x))); }
+  catch (err) { fail(err); }
+});
+
+/* ---------- events: budget ---------- */
+function openBudget(){
+  S.editingBudget = true; $('#budgetErr').hidden = true;
+  const b = S.settings && Number(S.settings.budget) > 0 ? Number(S.settings.budget) : '';
+  $('#budgetInput').value = b ? String(b) : '';
+  renderExpenses(); $('#budgetInput').focus();
+}
+$('#budgetSet').addEventListener('click', openBudget);
+$('#budgetEdit').addEventListener('click', openBudget);
+$('#budgetCancel').addEventListener('click', () => { S.editingBudget = false; renderExpenses(); });
+$('#budgetForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (S.mode === 'loading') return;
+  const v = parseAmount($('#budgetInput').value);
+  if (!(v > 0)) { const er = $('#budgetErr'); er.textContent = 'Masukkan bajet dalam ringgit, contohnya 1500'; er.hidden = false; return; }
+  S.editingBudget = false; renderExpenses();
+  try { await putSettings({budget: v}); toast('Bajet disimpan.'); } catch (err) { fail(err); }
+});
+$('#budgetRemove').addEventListener('click', async () => {
+  S.editingBudget = false; renderExpenses();
+  try { await removeSettings(); toast('Bajet dibuang.'); } catch (err) { fail(err); }
+});
+
+/* ---------- events: samples ---------- */
+$('#clearSamples').addEventListener('click', async () => {
+  const btn = $('#clearSamples'); btn.disabled = true;
+  try {
+    if (S.mode === 'db') {
+      const [t, x] = await Promise.all([
+        DB.collection('tasks').where('contoh', '==', true).get(),
+        DB.collection('expenses').where('contoh', '==', true).get(),
+      ]);
+      for (const d of t.docs) await retry(() => DB.collection('tasks').doc(d.id).delete());
+      for (const d of x.docs) await retry(() => DB.collection('expenses').doc(d.id).delete());
+      if (S.settings && S.settings.contoh) await removeSettings();
+    } else {
+      for (const [id, v] of Object.entries(local.data.tasks)) if (v && v.contoh) delete local.data.tasks[id];
+      for (const [id, v] of Object.entries(local.data.expenses)) if (v && v.contoh) delete local.data.expenses[id];
+      if (local.data.settings && local.data.settings.contoh) local.data.settings = null;
+      saveLocal(); syncLocal();
+    }
+    toast('Data contoh dipadam. Sekarang app ini kosong untuk data anda.');
+  } catch (err) { fail(err); }
+  btn.disabled = false;
+});
+
+init();
+})();
+</script>
