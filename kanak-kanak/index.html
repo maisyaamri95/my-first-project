@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Jom English Kanak-kanak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap">
+<style>
+/* Layout: a picture-card playroom — chunky tappable tiles, one colour per topic, words big enough for a 5-year-old's eyes. Deliberately single light theme. */
+:root {
+  color-scheme: light;
+  --bg: #EAF5FF;
+  --surface: #FFFFFF;
+  --ink: #1D2B4F;
+  --muted: #5B6889;
+  --line: #D3E2F2;
+  --sun: #FFC93C;
+  --go: #2DB87A;
+  --oops: #F2643D;
+  --tint: #DCEBFF;
+  --edge: #2A4FB8;
+  --deep: #3B6CF6;
+  --font-display: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Nunito", "Trebuchet MS", system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 4px solid #3B6CF6; outline-offset: 3px; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); box-shadow: 0 2px 0 var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 10px; padding-block: 10px; min-height: 64px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1; text-decoration: none; color: var(--ink); }
+.brand span { color: #3B6CF6; }
+.back {
+  width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--bg); font-size: 24px; font-weight: 800;
+  display: grid; place-items: center; text-decoration: none; flex: none;
+}
+.stars {
+  margin-left: auto; display: flex; align-items: center; gap: 6px; background: #FFF3CC; color: #8A5A00;
+  font-family: var(--font-display); font-weight: 800; font-size: 22px; padding: 4px 14px; border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.stars.pop { animation: pop .5s ease; }
+
+main { padding-block: 20px 60px; }
+h1, h2 { font-family: var(--font-display); font-weight: 800; letter-spacing: -.01em; margin: 0; line-height: 1.1; text-wrap: balance; }
+
+/* home */
+.hello { display: grid; gap: 6px; margin-bottom: 18px; }
+.hello h1 { font-size: clamp(34px, 9vw, 52px); }
+.hello p { margin: 0; color: var(--muted); font-size: 18px; }
+.topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.topic {
+  display: grid; justify-items: center; gap: 2px; text-align: center; text-decoration: none;
+  background: var(--tint); color: var(--ink); border-radius: 24px; padding: 18px 10px 14px;
+  box-shadow: 0 5px 0 var(--edge); transition: transform .12s;
+}
+.topic:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--edge); }
+.topic .ic { font-size: 56px; line-height: 1.1; }
+.topic .en { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.1; color: var(--deep); }
+.topic .ms { font-size: 14px; color: var(--muted); font-weight: 700; }
+
+.parents { margin-top: 32px; background: var(--surface); border-radius: 20px; padding: 16px 18px; display: grid; gap: 8px; }
+.parents h2 { font-size: 22px; }
+.parents ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; color: var(--ink); }
+.parents a { font-weight: 800; color: #3B6CF6; }
+
+/* topic page */
+.tophead { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.tophead .ic { font-size: 54px; line-height: 1; }
+.tophead h1 { font-size: clamp(32px, 8vw, 46px); color: var(--deep); }
+.tophead .ms { color: var(--muted); font-weight: 700; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.mode {
+  border: 0; border-radius: 18px; padding: 12px; font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  background: var(--surface); color: var(--muted); box-shadow: 0 4px 0 var(--line); text-decoration: none; text-align: center;
+}
+.mode.on { background: var(--deep); color: #fff; box-shadow: 0 4px 0 var(--edge); }
+.tip { color: var(--muted); font-weight: 700; margin: 0 0 12px; font-size: 16px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.card {
+  border: 0; background: var(--surface); border-radius: 22px; padding: 14px 8px 12px; display: grid; justify-items: center; gap: 4px;
+  box-shadow: 0 5px 0 var(--line); text-align: center; min-width: 0;
+}
+.card:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--line); }
+.card.talk { animation: bounce .55s ease; box-shadow: 0 5px 0 var(--edge); outline: 3px solid var(--deep); }
+.pic { font-size: 64px; line-height: 1.15; height: 78px; display: grid; place-items: center; }
+.pic svg { width: 72px; height: 72px; }
+.pic .swatch { width: 70px; height: 70px; border-radius: 50%; border: 3px solid rgba(0,0,0,.08); }
+.pic .digit { font-family: var(--font-display); font-weight: 800; font-size: 66px; line-height: 1; color: var(--deep); }
+.pic .letter { font-family: var(--font-display); font-weight: 800; font-size: 60px; line-height: 1; color: var(--deep); }
+.dots { font-size: 15px; line-height: 1.1; letter-spacing: 1px; min-height: 18px; max-width: 120px; }
+.card .w { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.1; overflow-wrap: anywhere; }
+.card .m { font-size: 14px; color: var(--muted); font-weight: 700; }
+.card .abcpic { font-size: 30px; line-height: 1; }
+
+/* game */
+.ask {
+  background: var(--surface); border-radius: 24px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+  box-shadow: 0 5px 0 var(--line);
+}
+.ask .say {
+  width: 66px; height: 66px; border-radius: 50%; border: 0; background: var(--deep); color: #fff; font-size: 30px; flex: none;
+  box-shadow: 0 4px 0 var(--edge); display: grid; place-items: center;
+}
+.ask .say:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--edge); }
+.ask .q { min-width: 0; }
+.ask .q small { display: block; color: var(--muted); font-weight: 700; font-size: 15px; }
+.ask .q b { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1.1; color: var(--deep); overflow-wrap: anywhere; }
+.progress { display: flex; gap: 8px; justify-content: center; margin: 0 0 14px; }
+.progress i { width: 16px; height: 16px; border-radius: 50%; background: var(--line); }
+.progress i.ok { background: var(--sun); }
+.progress i.now { background: var(--deep); }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.opt {
+  border: 0; background: var(--surface); border-radius: 24px; min-height: 140px; display: grid; place-items: center;
+  box-shadow: 0 6px 0 var(--line); padding: 10px;
+}
+.opt .pic { font-size: 78px; height: auto; }
+.opt .pic svg { width: 88px; height: 88px; }
+.opt .pic .swatch { width: 92px; height: 92px; }
+.opt .pic .digit, .opt .pic .letter { font-size: 84px; }
+.opt.right { background: #DDF7EA; box-shadow: 0 6px 0 var(--go); animation: pop .5s ease; }
+.opt.wrong { animation: shake .45s ease; background: #FFE7DF; }
+.opt[disabled] { cursor: default; }
+
+.start, .end { text-align: center; display: grid; gap: 14px; justify-items: center; padding-block: 18px; }
+.start .big, .end .big { font-size: 86px; line-height: 1; }
+.end h2 { font-size: 40px; color: var(--deep); }
+.end .got { font-size: 44px; letter-spacing: 4px; }
+.btn {
+  border: 0; border-radius: 999px; padding: 14px 28px; font-family: var(--font-display); font-weight: 800; font-size: 24px;
+  background: var(--deep); color: #fff; box-shadow: 0 5px 0 var(--edge); text-decoration: none; display: inline-block;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--edge); }
+.btn.soft { background: var(--surface); color: var(--deep); box-shadow: 0 5px 0 var(--line); }
+.row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.nosound { background: #FFF3CC; color: #6B4A00; border-radius: 16px; padding: 10px 14px; font-weight: 700; margin-bottom: 14px; }
+
+@keyframes bounce { 0% { transform: scale(1); } 35% { transform: scale(1.08) rotate(-2deg); } 70% { transform: scale(.97); } 100% { transform: scale(1); } }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@media (max-width: 380px) { .topic .ic { font-size: 46px; } .pic { font-size: 54px; } }
+</style>
+
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="back" id="backBtn" href="#" aria-label="Kembali" hidden>←</a>
+    <a class="brand" href="#">Jom <span>English!</span></a>
+    <div class="stars" id="stars" aria-label="Bintang">⭐ <span id="starN">0</span></div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<script>
+const TOPICS = [
+  { id: "abc", en: "ABC", ms: "Abjad", ic: "🔤", tint: "#FFE4D6", edge: "#F3B79A", deep: "#C2410C", kind: "abc",
+    items: [["A","apple","🍎","epal"],["B","ball","⚽","bola"],["C","cat","🐱","kucing"],["D","dog","🐶","anjing"],["E","egg","🥚","telur"],["F","fish","🐟","ikan"],["G","grapes","🍇","anggur"],["H","hat","🎩","topi"],["I","ice cream","🍦","aiskrim"],["J","juice","🧃","jus"],["K","kite","🪁","layang-layang"],["L","lion","🦁","singa"],["M","monkey","🐵","monyet"],["N","nose","👃","hidung"],["O","orange","🍊","oren"],["P","penguin","🐧","penguin"],["Q","queen","👸","permaisuri"],["R","rabbit","🐰","arnab"],["S","sun","☀️","matahari"],["T","tree","🌳","pokok"],["U","umbrella","☂️","payung"],["V","van","🚐","van"],["W","whale","🐳","ikan paus"],["X","X-ray","🩻","x-ray"],["Y","yo-yo","🪀","yo-yo"],["Z","zebra","🦓","zebra"]]
+      .map(([l, en, e, ms]) => ({ l, en, e, ms })) },
+  { id: "nombor", en: "Numbers", ms: "Nombor 1–10", ic: "🔢", tint: "#DCEBFF", edge: "#A9C6F0", deep: "#2856C9", kind: "num",
+    items: ["one","two","three","four","five","six","seven","eight","nine","ten"].map((en, i) => ({ n: i + 1, en, ms: ["satu","dua","tiga","empat","lima","enam","tujuh","lapan","sembilan","sepuluh"][i] })) },
+  { id: "warna", en: "Colours", ms: "Warna", ic: "🎨", tint: "#F3E3FF", edge: "#D2B3EE", deep: "#7A3DC2", kind: "color",
+    items: [["red","merah","#E53935"],["blue","biru","#1E6FE0"],["yellow","kuning","#FFD12E"],["green","hijau","#2EAA4F"],["orange","oren","#FF8A1F"],["purple","ungu","#8E44C9"],["pink","merah jambu","#FF7BB5"],["brown","coklat","#8B5A2B"],["black","hitam","#222222"],["white","putih","#FFFFFF"]]
+      .map(([en, ms, c]) => ({ en, ms, c })) },
+  { id: "haiwan", en: "Animals", ms: "Haiwan", ic: "🐘", tint: "#DDF5E6", edge: "#A6DDBA", deep: "#18804A", kind: "emoji",
+    items: [["cat","kucing","🐱"],["dog","anjing","🐶"],["bird","burung","🐦"],["fish","ikan","🐟"],["cow","lembu","🐄"],["duck","itik","🦆"],["chicken","ayam","🐔"],["elephant","gajah","🐘"],["tiger","harimau","🐯"],["monkey","monyet","🐒"],["rabbit","arnab","🐇"],["frog","katak","🐸"]]
+      .map(([en, ms, e]) => ({ en, ms, e })) },
+  { id: "buah", en: "Fruits", ms: "Buah-buahan", ic: "🍉", tint: "#FFE0E6", edge: "#F2A9B8", deep: "#C8234B", kind: "emoji",
+    items: [["apple","epal","🍎"],["banana","pisang","🍌"],["orange","oren","🍊"],["grapes","anggur","🍇"],["watermelon","tembikai","🍉"],["mango","mangga","🥭"],["pineapple","nanas","🍍"],["strawberry","strawberi","🍓"],["coconut","kelapa","🥥"]]
+      .map(([en, ms, e]) => ({ en, ms, e })) },
+  { id: "badan", en: "My Body", ms: "Anggota badan", ic: "👂", tint: "#FFF0CC", edge: "#EED08A", deep: "#A35F00", kind: "emoji",
+    items: [["eye","mata","👁️"],["ear","telinga","👂"],["nose","hidung","👃"],["mouth","mulut","👄"],["tooth","gigi","🦷"],["hand","tangan","✋"],["leg","kaki","🦵"],["foot","tapak kaki","🦶"]]
+      .map(([en, ms, e]) => ({ en, ms, e })) },
+  { id: "keluarga", en: "Family", ms: "Keluarga", ic: "👨‍👩‍👧", tint: "#E0F4F7", edge: "#A7D9E1", deep: "#127184", kind: "emoji",
+    items: [["father","ayah","👨"],["mother","ibu","👩"],["brother","abang / adik lelaki","👦"],["sister","kakak / adik perempuan","👧"],["baby","bayi","👶"],["grandfather","atuk","👴"],["grandmother","nenek","👵"]]
+      .map(([en, ms, e]) => ({ en, ms, e })) },
+  { id: "perasaan", en: "Feelings", ms: "Perasaan", ic: "😊", tint: "#FFF5D1", edge: "#EFD98A", deep: "#9A6A00", kind: "emoji", ask: en => `Who is ${en}?`,
+    items: [["happy","gembira","😊"],["sad","sedih","😢"],["angry","marah","😠"],["sleepy","mengantuk","😴"],["scared","takut","😨"],["surprised","terkejut","😮"]]
+      .map(([en, ms, e]) => ({ en, ms, e })) },
+  { id: "bentuk", en: "Shapes", ms: "Bentuk", ic: "🔺", tint: "#E6E8FF", edge: "#B7BCF0", deep: "#3B44B8", kind: "shape",
+    items: [["circle","bulatan","#E53935"],["square","segi empat sama","#1E6FE0"],["triangle","segi tiga","#2EAA4F"],["star","bintang","#FFB300"],["heart","hati","#FF4F8B"]]
+      .map(([en, ms, c]) => ({ en, ms, c })) },
+  { id: "salam", en: "Hello!", ms: "Ucapan", ic: "👋", tint: "#E2F6F0", edge: "#A8DCCB", deep: "#137560", kind: "emoji", noGame: true,
+    items: [["Hello!","Helo!","👋"],["Good morning!","Selamat pagi!","🌅"],["Good night!","Selamat malam!","🌙"],["Thank you!","Terima kasih!","🙏"],["Sorry!","Maaf!","😔"],["I love you!","Saya sayang awak!","❤️"],["Bye-bye!","Selamat tinggal!","🙋"]]
+      .map(([en, ms, e]) => ({ en, ms, e })) }
+];
+
+/* ---------- storage (this browser only) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("kids:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("kids:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+let stars = store.get("stars", 0);
+function showStars(pop) {
+  document.getElementById("starN").textContent = stars;
+  if (pop) { const s = document.getElementById("stars"); s.classList.remove("pop"); void s.offsetWidth; s.classList.add("pop"); }
+}
+function addStar() { stars++; store.set("stars", stars); showStars(true); }
+
+/* ---------- speech ---------- */
+const canSpeak = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+let voices = [];
+function loadVoices() { try { voices = speechSynthesis.getVoices(); } catch (e) {} }
+if (canSpeak) { loadVoices(); try { speechSynthesis.onvoiceschanged = loadVoices; } catch (e) {} }
+function speak(text, onend) {
+  if (!canSpeak) { if (onend) setTimeout(onend, 600); return; }
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const v = voices.find(v => /^en[-_]GB/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang));
+    if (v) u.voice = v;
+    u.lang = v ? v.lang : "en-GB";
+    u.rate = 0.8; u.pitch = 1.1;
+    let fired = false;
+    const done = () => { if (!fired) { fired = true; if (onend) onend(); } };
+    u.onend = done; u.onerror = done;
+    if (onend) setTimeout(done, 4000);
+    speechSynthesis.speak(u);
+  } catch (e) { if (onend) setTimeout(onend, 600); }
+}
+
+/* ---------- pictures ---------- */
+function starPoints(cx, cy, R, r) {
+  const p = [];
+  for (let i = 0; i < 10; i++) { const a = Math.PI / 5 * i - Math.PI / 2, rad = i % 2 ? r : R; p.push((cx + rad * Math.cos(a)).toFixed(1) + "," + (cy + rad * Math.sin(a)).toFixed(1)); }
+  return p.join(" ");
+}
+function shapeSvg(name, c) {
+  const body = {
+    circle: `<circle cx="50" cy="50" r="40" fill="${c}"/>`,
+    square: `<rect x="12" y="12" width="76" height="76" rx="6" fill="${c}"/>`,
+    triangle: `<polygon points="50,10 92,88 8,88" fill="${c}" stroke="${c}" stroke-width="4" stroke-linejoin="round"/>`,
+    star: `<polygon points="${starPoints(50, 53, 44, 18)}" fill="${c}" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`,
+    heart: `<path d="M50 88 C22 68 6 50 6 32 C6 18 16 9 29 9 C39 9 46 15 50 23 C54 15 61 9 71 9 C84 9 94 18 94 32 C94 50 78 68 50 88Z" fill="${c}"/>`
+  }[name];
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${body}</svg>`;
+}
+function pic(t, it, inGame) {
+  switch (t.kind) {
+    case "abc": return inGame ? `<div class="pic"><span class="letter">${it.l}</span></div>` : `<div class="pic"><span class="letter">${it.l}${it.l.toLowerCase()}</span></div>`;
+    case "num": return `<div class="pic"><span class="digit">${it.n}</span></div>`;
+    case "color": return `<div class="pic"><span class="swatch" style="background:${it.c}"></span></div>`;
+    case "shape": return `<div class="pic">${shapeSvg(it.en, it.c)}</div>`;
+    default: return `<div class="pic"><span>${it.e}</span></div>`;
+  }
+}
+function sayText(t, it) {
+  if (t.kind === "abc") return `${it.l}. ${it.l} is for ${it.en}.`;
+  return it.en;
+}
+function askText(t, it) {
+  if (t.kind === "abc") return `Where is the letter ${it.l}?`;
+  if (t.kind === "num") return `Where is number ${it.en}?`;
+  if (t.kind === "color") return `Which one is ${it.en}?`;
+  if (t.ask) return t.ask(it.en);
+  return `Where is the ${it.en}?`;
+}
+function askLabel(t, it) { return t.kind === "abc" ? it.l : t.kind === "num" ? it.en : it.en; }
+
+/* ---------- views ---------- */
+const app = document.getElementById("app");
+const backBtn = document.getElementById("backBtn");
+function themeVars(t) { return `--tint:${t.tint};--edge:${t.edge};--deep:${t.deep}`; }
+function setTheme(t) {
+  const r = document.documentElement.style;
+  if (t) { r.setProperty("--tint", t.tint); r.setProperty("--edge", t.edge); r.setProperty("--deep", t.deep); }
+  else { r.setProperty("--deep", "#3B6CF6"); r.setProperty("--edge", "#2A4FB8"); }
+}
+const NOSOUND = canSpeak ? "" : `<div class="nosound">Pelayar ini tak boleh keluarkan suara. Cuba buka dalam Safari atau Chrome.</div>`;
+
+function viewHome() {
+  setTheme(null);
+  backBtn.hidden = true;
+  app.innerHTML = `
+    ${NOSOUND}
+    <section class="hello">
+      <h1>Hello! Jom belajar English.</h1>
+      <p>Pilih satu gambar untuk mula.</p>
+    </section>
+    <nav class="topics">
+      ${TOPICS.map(t => `
+        <a class="topic" href="#t-${t.id}" style="${themeVars(t)}">
+          <span class="ic" aria-hidden="true">${t.ic}</span>
+          <span class="en">${t.en}</span>
+          <span class="ms">${t.ms}</span>
+        </a>`).join("")}
+    </nav>
+    <section class="parents">
+      <h2>Untuk ibu bapa</h2>
+      <ul>
+        <li>Duduk bersama anak. Tekan gambar, dengar, kemudian sebut kuat-kuat bersama.</li>
+        <li>Mula dengan <b>Belajar</b>, kemudian cuba <b>Main</b>. Setiap jawapan betul dapat satu bintang ⭐.</li>
+        <li>10 minit sehari sudah cukup. Ulang topik yang sama beberapa hari.</li>
+        <li>Di iPhone, matikan mod senyap dan kuatkan volume supaya suara keluar.</li>
+      </ul>
+      <p style="margin:4px 0 0">Untuk dewasa atau kanak-kanak yang lebih besar: <a href="../">modul Belajar Bahasa Inggeris →</a></p>
+    </section>`;
+}
+
+function viewLearn(t) {
+  setTheme(t);
+  backBtn.hidden = false; backBtn.href = "#";
+  app.innerHTML = `
+    ${NOSOUND}
+    <header class="tophead"><span class="ic" aria-hidden="true">${t.ic}</span><div><h1>${t.en}</h1><div class="ms">${t.ms}</div></div></header>
+    ${t.noGame ? "" : `<nav class="modes"><a class="mode on" href="#t-${t.id}">📖 Belajar</a><a class="mode" href="#g-${t.id}">🎮 Main</a></nav>`}
+    <p class="tip">Tekan gambar untuk dengar.</p>
+    <div class="cards">
+      ${t.items.map((it, i) => `
+        <button type="button" class="card" data-i="${i}" aria-label="${it.en}">
+          ${pic(t, it, false)}
+          ${t.kind === "abc" ? `<span class="abcpic" aria-hidden="true">${it.e}</span>` : ""}
+          ${t.kind === "num" ? `<span class="dots" aria-hidden="true">${"⭐".repeat(it.n)}</span>` : ""}
+          <span class="w">${it.en}</span>
+          <span class="m">${it.ms}</span>
+        </button>`).join("")}
+    </div>`;
+  app.querySelectorAll(".card").forEach(c => c.addEventListener("click", () => {
+    const it = t.items[+c.dataset.i];
+    app.querySelectorAll(".card.talk").forEach(x => x.classList.remove("talk"));
+    void c.offsetWidth; c.classList.add("talk");
+    speak(sayText(t, it));
+  }));
+}
+
+/* ---------- game ---------- */
+const PRAISE = ["Great job!", "Well done!", "Yes! Very good!", "Excellent!", "Super!"];
+const ROUNDS = 5;
+let G = null;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function viewGame(t) {
+  setTheme(t);
+  backBtn.hidden = false; backBtn.href = "#t-" + t.id;
+  G = { t, order: shuffle(t.items.map((_, i) => i)).slice(0, ROUNDS), k: 0, got: 0, tries: 0, lock: false };
+  app.innerHTML = `
+    ${NOSOUND}
+    <header class="tophead"><span class="ic" aria-hidden="true">${t.ic}</span><div><h1>${t.en}</h1><div class="ms">${t.ms}</div></div></header>
+    <nav class="modes"><a class="mode" href="#t-${t.id}">📖 Belajar</a><a class="mode on" href="#g-${t.id}">🎮 Main</a></nav>
+    <div class="start">
+      <div class="big" aria-hidden="true">🎧</div>
+      <h2>Dengar dan cari gambar!</h2>
+      <p class="tip">${ROUNDS} soalan. Jawapan betul dapat bintang ⭐</p>
+      <button type="button" class="btn" id="go">▶ Mula</button>
+    </div>`;
+  document.getElementById("go").addEventListener("click", () => { speak("Let's play!"); setTimeout(round, 900); });
+}
+
+function round() {
+  const t = G.t;
+  const target = G.order[G.k];
+  const others = shuffle(t.items.map((_, i) => i).filter(i => i !== target)).slice(0, 3);
+  const opts = shuffle([target, ...others]);
+  G.lock = false; G.tries = 0;
+  const it = t.items[target];
+  app.querySelector(".start, .play, .end")?.remove();
+  const box = document.createElement("section"); box.className = "play";
+  box.innerHTML = `
+    <div class="progress" aria-label="Soalan ${G.k + 1} daripada ${ROUNDS}">
+      ${Array.from({ length: ROUNDS }, (_, i) => `<i class="${i < G.k ? "ok" : i === G.k ? "now" : ""}"></i>`).join("")}
+    </div>
+    <div class="ask">
+      <button type="button" class="say" id="again" aria-label="Dengar lagi">🔊</button>
+      <div class="q"><small>Cari gambar ini:</small><b>${askLabel(t, it)}</b></div>
+    </div>
+    <div class="opts">
+      ${opts.map(i => `<button type="button" class="opt" data-i="${i}" aria-label="${t.items[i].en}">${pic(t, t.items[i], true)}</button>`).join("")}
+    </div>`;
+  app.appendChild(box);
+  const prompt = askText(t, it);
+  document.getElementById("again").addEventListener("click", () => speak(prompt));
+  box.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => pick(b, +b.dataset.i === target)));
+  speak(prompt);
+}
+
+function pick(b, ok) {
+  if (G.lock) return;
+  if (ok) {
+    G.lock = true;
+    b.classList.add("right");
+    app.querySelectorAll(".opt").forEach(o => o.disabled = true);
+    if (G.tries === 0) { G.got++; addStar(); }
+    speak(PRAISE[Math.floor(Math.random() * PRAISE.length)], () => {
+      G.k++;
+      setTimeout(() => G.k < ROUNDS ? round() : finish(), 350);
+    });
+  } else {
+    G.tries++;
+    b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
+    speak("Oops! Try again!");
+  }
+}
+
+function finish() {
+  const t = G.t;
+  app.querySelector(".play")?.remove();
+  const box = document.createElement("section"); box.className = "end";
+  const msg = G.got >= 4 ? "Hebat!" : G.got >= 2 ? "Bagus!" : "Cuba lagi!";
+  box.innerHTML = `
+    <div class="big" aria-hidden="true">${G.got >= 4 ? "🏆" : G.got >= 2 ? "🎉" : "💪"}</div>
+    <h2>${msg}</h2>
+    <div class="got" aria-label="${G.got} bintang">${"⭐".repeat(G.got) || "🙂"}</div>
+    <p class="tip">Dapat ${G.got} bintang daripada ${ROUNDS}.</p>
+    <div class="row">
+      <button type="button" class="btn" id="again2">🔁 Main lagi</button>
+      <a class="btn soft" href="#">🏠 Menu</a>
+    </div>`;
+  app.appendChild(box);
+  speak(G.got >= 4 ? `Hooray! You got ${G.got} stars!` : G.got >= 2 ? `Good job! You got ${G.got} stars!` : "Good try! Let's play again!");
+  document.getElementById("again2").addEventListener("click", () => { viewGame(t); document.getElementById("go").click(); });
+}
+
+/* ---------- router ---------- */
+function route() {
+  if (canSpeak) try { speechSynthesis.cancel(); } catch (e) {}
+  const h = location.hash.slice(1);
+  const m = h.match(/^([tg])-([a-z]+)$/);
+  const t = m && TOPICS.find(x => x.id === m[2]);
+  if (t && m[1] === "g" && !t.noGame) viewGame(t);
+  else if (t) viewLearn(t);
+  else viewHome();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+showStars(false);
+route();
+</script>
+
+</body>
+</html>
